@@ -1,0 +1,30 @@
+# Build provenance — second-opinion replication of ledger #111 (snare S1)
+
+date: 2026-09-20
+repo: /home/azidan/AQL/AI/AITinkerers/snare (read-only snapshot)
+HEAD: 6d86d72e75a622d53149612753a7a4e55a29abb7  (git rev-parse HEAD)
+crate: snare v0.4.13
+git status --porcelain BEFORE and AFTER build (unrelated pre-existing files only):
+  ?? SECOND-OPINION-PROMPT.md
+  ?? snare-second-opinion-report-2.md
+  ?? snare-second-opinion-report.md
+
+build (offline, no network):
+  cd snare
+  RUSTUP_TOOLCHAIN=1.96.0 CARGO_TARGET_DIR=/home/azidan/AQL/AI/AITinkerers/scratch/target-snare \
+      cargo build --release --offline
+  => Finished `release` profile [optimized] target(s) in 20.19s
+
+binary:
+  /home/azidan/AQL/AI/AITinkerers/scratch/target-snare/release/snare
+  sha256 d381f135e5f63f1cf7098ab772c9a7c1d0ffda5c6cfb3e286ebe4cd003e35c44
+
+prior-lane binary (NOT used by this replication; provenance unattestable, hashes differ
+only by embedded build paths): /tmp/opencode/snare-target/release/snare
+  sha256 70b8b80cbf912b336efd2c3c5f23d687c7baa659ad86eefe4977cda78085904d
+
+runtime config (synthetic, loopback-only, no secrets): snare.conf in this dir
+  listen = "127.0.0.1:18013"; github { match ".*" { } }
+
+daemon logs: evidence/server-vuln.log, evidence/server-control.log (both empty —
+the foreground daemon is silent without -v; no errors).

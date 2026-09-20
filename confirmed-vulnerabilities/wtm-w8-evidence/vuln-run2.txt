@@ -1,0 +1,4 @@
+mode: vuln
+current stored general_token: canary-token-account-B
+outgoing Authorization header: canary-token-account-A
+CANARY-COMPROMISED: upload authenticated as previous account (stale token captured at module init)

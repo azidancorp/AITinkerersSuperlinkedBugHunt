@@ -1,0 +1,32 @@
+{
+  "mode": "vuln",
+  "trigger": {
+    "registerWTMUser": true,
+    "political_affiliation": "canary-party",
+    "age": 42,
+    "gender": "x",
+    "postcode": "0",
+    "country": "canaryland"
+  },
+  "extensionStorageToken": "fresh-canary-token-7f3d9a",
+  "pageOriginLocalStorage_general_token": "\"fresh-canary-token-7f3d9a\"",
+  "tabMessagesSent": [
+    {
+      "tabId": 1,
+      "keys": [
+        "registrationFeedback"
+      ]
+    }
+  ],
+  "postMessageStarCount": 1,
+  "pageScriptObserverSawCanary": true,
+  "runtimeReloadCalled": true,
+  "fetchCalls": [
+    {
+      "url": "https://canary-data-api.invalid/user-credentials",
+      "method": "POST",
+      "authorization": null
+    }
+  ],
+  "verdict": "VULNERABLE-REPRODUCED"
+}

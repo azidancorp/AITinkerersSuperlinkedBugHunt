@@ -1,0 +1,2 @@
+sendRawLog calls: [{"type":"YOUTUBE","body":{"advert":"attacker-canary-payload"}}]
+RESULT: page-injected rawlog accepted

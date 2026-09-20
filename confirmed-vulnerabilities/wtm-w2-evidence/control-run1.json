@@ -1,0 +1,14 @@
+{
+  "mode": "control",
+  "trigger": {
+    "updateYGTab": true
+  },
+  "extensionStorageToken": null,
+  "pageOriginLocalStorage_general_token": null,
+  "tabMessagesSent": [],
+  "postMessageStarCount": 0,
+  "pageScriptObserverSawCanary": false,
+  "runtimeReloadCalled": false,
+  "fetchCalls": [],
+  "verdict": "BENIGN"
+}

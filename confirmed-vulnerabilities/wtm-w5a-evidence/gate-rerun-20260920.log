@@ -1,0 +1,39 @@
+  [vuln] rc=1 97ms sha=2c679e85eeca143b
+    mode: vuln
+    storage keys: ["general_token","userData"]
+    sendRawLog invocations: 1
+    CANARY-COMPROMISED: EU-registered user (userData.country=de) collected; gate read key 'userCountry' which registration never sets
+    
+  [control] rc=0 85ms sha=2723ec394f656c1d
+    mode: control
+    storage keys: ["general_token","userData","userCountry"]
+    sendRawLog invocations: 0
+    CLEAN: collection gate excluded the EU user
+    
+  [vuln] rc=1 83ms sha=2c679e85eeca143b
+    mode: vuln
+    storage keys: ["general_token","userData"]
+    sendRawLog invocations: 1
+    CANARY-COMPROMISED: EU-registered user (userData.country=de) collected; gate read key 'userCountry' which registration never sets
+    
+  [control] rc=0 96ms sha=2723ec394f656c1d
+    mode: control
+    storage keys: ["general_token","userData","userCountry"]
+    sendRawLog invocations: 0
+    CLEAN: collection gate excluded the EU user
+    
+  [vuln] rc=1 95ms sha=2c679e85eeca143b
+    mode: vuln
+    storage keys: ["general_token","userData"]
+    sendRawLog invocations: 1
+    CANARY-COMPROMISED: EU-registered user (userData.country=de) collected; gate read key 'userCountry' which registration never sets
+    
+  [control] rc=0 94ms sha=2723ec394f656c1d
+    mode: control
+    storage keys: ["general_token","userData","userCountry"]
+    sendRawLog invocations: 0
+    CLEAN: collection gate excluded the EU user
+    
+
+differential vs control: 3/3 replay pair(s) YES
+verify log stored for #131 (6 run(s) this call, 12 kept in history). Re-run any time.

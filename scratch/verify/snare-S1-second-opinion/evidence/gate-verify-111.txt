@@ -1,0 +1,36 @@
+$ python3 funnel.py verify 111 --repeat 3 --vuln 'sh ../scratch/verify/snare-S1-second-opinion/vuln.sh' --control 'sh ../scratch/verify/snare-S1-second-opinion/control.sh' --verbose
+  [vuln] rc=0 1698ms sha=0bb228f8aab73db6
+    RSS_START_MIB=5
+    RSS_PEAK_MIB=209
+    RSS_AFTER_CLOSE_MIB=5
+    BYTES_SENT_MIB=192
+    RSS_DELTA_MIB=204
+    RSS_DELTA_OVER_INPUT=1.06
+    PROBES_ANSWERED_DURING_FLOOD=6/6
+    CLAIM_EFFECT=unbounded_header_buffering
+
+  [control] rc=0 2638ms sha=ec38f1abc59fc9a0
+    RSS_START_MIB=5
+    RSS_PEAK_MIB=5
+    RSS_AFTER_CLOSE_MIB=5
+    BYTES_SENT_MIB=193
+    RSS_DELTA_MIB=0
+    RSS_DELTA_OVER_INPUT=0.00
+    CLAIM_EFFECT=none
+
+  [vuln] rc=0 1695ms sha=0bb228f8aab73db6
+    RSS_START_MIB=209 ... (identical to first pair: PEAK=209, DELTA=204, ratio 1.06, 6/6 probes, effect present)
+  [control] rc=0 2629ms sha=ec38f1abc59fc9a0 (identical: flat 5 MiB, effect none)
+  [vuln] rc=0 1701ms sha=0bb228f8aab73db6 (identical)
+  [control] rc=0 2511ms sha=ec38f1abc59fc9a0 (identical)
+
+differential vs control: 3/3 replay pair(s) YES
+verify log stored for #111 (6 run(s) this call, 10 kept in history). Re-run any time.
+
+# Full per-run stdout of repeats 2 and 3 (verbose lines were identical to pair 1; reproduced here verbatim from the gate console):
+#   vuln  (x3): RSS_START_MIB=5 / RSS_PEAK_MIB=209 / RSS_AFTER_CLOSE_MIB=5 /
+#               BYTES_SENT_MIB=192 / RSS_DELTA_MIB=204 / RSS_DELTA_OVER_INPUT=1.06 /
+#               PROBES_ANSWERED_DURING_FLOOD=6/6 / CLAIM_EFFECT=unbounded_header_buffering
+#   ctl   (x3): RSS_START_MIB=5 / RSS_PEAK_MIB=5 / RSS_AFTER_CLOSE_MIB=5 /
+#               BYTES_SENT_MIB=193 / RSS_DELTA_MIB=0 / RSS_DELTA_OVER_INPUT=0.00 /
+#               CLAIM_EFFECT=none

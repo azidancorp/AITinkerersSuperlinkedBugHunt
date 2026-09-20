@@ -1,0 +1,19 @@
+# Fidelity audit of scratch/verify/Who-Targets-Me-W5a/w5a-replay.cjs
+# against real HEAD 64e9989c65ba83e8536e57768e19ff0b6409abda (repo clean)
+# Audit agent: independent second-opinion verification, 2026-09-20
+
+transformed line count: 74 (original: 87)
+residual import/export tokens: 0
+gate block verbatim in transformed source: true
+SEND_RAW_LOG case verbatim: true
+
+# Interpretation: the load() regex strips exactly the two import statements
+# (file lines 1-11 and 12, plus the blank separator line 13) and rewrites the
+# single "export const" to "const". 86 -> 73 code lines. The EU gate and the
+# SEND_RAW_LOG case executed in the sandbox are byte-identical to HEAD.
+
+# userCountry writers, repo-wide grep (only two files mention the key):
+#   src/shared/handlers/onInstalledBackgroundEventListener.js:36-40 (sole writer)
+#   src/shared/handlers/onMessageEventHandler.js:69-70 (the gate, read-only)
+# No registration, deletion, login or content-script path writes userCountry.
+# handleUserDeletion.js removes only general_token and userData.

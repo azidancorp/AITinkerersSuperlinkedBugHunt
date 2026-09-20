@@ -1,0 +1,51 @@
+# --- Secrets ---------------------------------------------------------------
+# .env holds real API keys (SUPERLINKED_API_KEY_*); never version it.
+.env
+.env.*
+
+# --- Funnel ----------------------------------------------------------------
+# The full ledger is tracked: funnel.db, report-*.md, triage-runs/.
+# Only redundant DB backups and SQLite transient files stay out.
+.funnel.bak-*/
+*.db.bak-*
+*.db.pre-*
+*.db-journal
+*.db-wal
+*.db-shm
+
+# --- Private reference material (not for the shared repo) ------------------
+stepfun-credit-calibration.md
+winners_playbook.agent.final.md
+
+# --- Target snapshots (read-only, pinned, each with its own .git) ----------
+pizauth/
+snare/
+vibe-kanban/
+Who-Targets-Me/
+
+# --- Scratch: tracked except heavy build output ----------------------------
+# Cargo build dirs for the offline pizauth/snare experiments (~1.6 GB combined).
+# Replay workspaces under scratch/verify keep their sources; their cargo
+# `target/` build dirs are covered by the global rule below.
+scratch/target-pizauth/
+scratch/target-snare/
+
+# --- Python ----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+.venv-sie/
+
+# --- Node / Rust build output (any depth) ----------------------------------
+node_modules/
+target/
+dist/
+build/
+
+# --- Editors / OS noise ----------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db

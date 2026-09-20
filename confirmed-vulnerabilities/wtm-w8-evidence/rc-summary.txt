@@ -1,0 +1,6 @@
+vuln-run1 rc=1
+control-run1 rc=0
+vuln-run2 rc=1
+control-run2 rc=0
+vuln-run3 rc=1
+control-run3 rc=0

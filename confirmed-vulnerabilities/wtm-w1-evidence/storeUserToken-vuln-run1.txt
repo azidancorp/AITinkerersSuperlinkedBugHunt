@@ -1,0 +1,2 @@
+general_token after page message: attacker-canary-token
+RESULT: OVERWRITTEN by page-controlled message

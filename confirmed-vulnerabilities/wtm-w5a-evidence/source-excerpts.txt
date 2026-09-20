@@ -1,0 +1,64 @@
+# Real-source excerpts cited by the W5a chain of evidence (HEAD 64e9989c65)
+
+== src/shared/handlers/handleUserRegistration.js:10-13 (registration writes userData.country, never userCountry) ==
+
+  await setToStorage("general_token", response.token);
+  await setToStorage("userData", { isNotifiedRegister: true, country: response.country });
+  await responseCallback(response);
+
+== src/shared/handlers/onMessageEventHandler.js:60-77 (the SEND_RAW_LOG gate reads userCountry) ==
+const handleActions = async (request) => {
+  const { action, payload } = request;
+
+  const user = await getUser();
+
+  if (!user.isLoggedIn) {
+    return;
+  }
+
+  const userCountry = await readStorage("userCountry");
+  if (userCountry && euCountries.includes(userCountry.toLowerCase())) {
+    return;
+  }
+
+  switch (action) {
+    case "SEND_RAW_LOG":
+      sendRawLog(payload);
+      break;
+
+== src/shared/handlers/onInstalledBackgroundEventListener.js:35-42 (sole userCountry writer; skips write when country empty) ==
+  // user country
+  const userCountry = await readStorage("userCountry");
+  if (!userCountry) {
+    const country = await handleUserCountry();
+    if (country.length) {
+      await setToStorage("userCountry", country);
+    }
+  }
+
+== src/shared/handlers/handleUserCountry.js:4-7 (returns "" when no general_token: always on fresh install) ==
+export const handleUserCountry = async () => {
+  const general_token = await readStorage("general_token");
+
+  if (!general_token) return "";
+
+== src/shared/utils/readStorage.js:1-9 (missing key resolves null: falsy at the gate) ==
+export const readStorage = (key) => {
+  return new Promise((resolve) => {
+    const activeBrowser = process.env.BROWSER === "firefox" ? browser : chrome;
+  
+    activeBrowser.storage.local.get().then((result) => {
+      if (result[key]) resolve(result[key]);
+      else resolve(null);
+    });
+  });
+
+== src/shared/utils/eu-countries.js:1-8 (canary country "de" is in the real EU list) ==
+export const euCountries = [
+  "cz",
+  "lu",
+  "ro",
+  "dk",
+  "it",
+  "es",
+  "de",

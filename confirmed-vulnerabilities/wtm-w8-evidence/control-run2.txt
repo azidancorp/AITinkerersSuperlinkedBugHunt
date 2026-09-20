@@ -1,0 +1,4 @@
+mode: control
+current stored general_token: canary-token-account-A
+outgoing Authorization header: canary-token-account-A
+CLEAN: upload carried the current account token
