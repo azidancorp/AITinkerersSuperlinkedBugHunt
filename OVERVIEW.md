@@ -42,7 +42,7 @@ One-page visual summary of the day's work. Source of truth: `.funnel/funnel.db` 
 | Submitted                                | 0      | human gate hasn't run yet                  |
 
 
-## The 11 verified findings (plain English)
+## The 11 verified findings
 
 
 | #   | Target      | Finding                    | In one sentence                                                                                                                                                  |
