@@ -1,6 +1,7 @@
 # CVSS v3.1 base-score assessment — all confirmed findings
 
-Assessment date: 2026-09-20. Scope: the nine confirmed findings in
+Assessment date: 2026-09-20; **revised same day** (arithmetic correction, see
+revision note below). Scope: the nine confirmed findings in
 `confirmed-vulnerabilities/`, cross-referenced to ledger rows
 (`.funnel/funnel.db`) and to `claimed-vulnerabilities.md` (claim IDs V1, V2,
 W1, W2, W5a, W8, S1, S2, P8).
@@ -9,27 +10,43 @@ Scores are **base only** — no temporal, environmental, or modified-base
 modifiers. Metric choices are grounded in each report's own "Honest impact"
 and "Not demonstrated / do not claim" sections, not in the claim's title.
 
+> **Revision note (2026-09-20, second pass).** Every Scope-Changed score in
+> the first revision was computed with a wrong impact sub-formula (a linear
+> `3.25 × (ISS − 0.97)` term instead of the spec's 15th-power
+> `3.25 × (ISS − 0.02)^15` soft cap), understating or overstating several
+> rows; all Scope-Unchanged rows were correct. The equations were re-verified
+> against the FIRST CVSS v3.1 specification document (§7.1) and every score
+> recomputed with `scratch/cvss31.py`, which reproduces six canonical
+> anchor vectors exactly (5.3 info-leak shape, 6.1 reflected-XSS shape, 7.5
+> remote-DoS shape, 9.6 CSRF-to-RCE shape, 9.8, 10.0). Vector choices are
+> unchanged from the first revision — only the derived numbers are corrected.
+
 ## Scores
 
 | Rank | Finding | Ledger | Vector | Score |
 |---|---|---|---|---|
-| 1 | V1 — OAuth handoff reflected XSS | #105 / #110 | `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H` | **8.9 High** |
-| 1 | W1 — unvalidated page→background bridge | #120 / #122 | `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H` | **8.9 High** |
-| 1 | W2 — registration token → page origin | #121 | `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:L` | **8.9 High** |
+| 1 | V1 — OAuth handoff reflected XSS | #105 / #110 | `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H` | **9.6 Critical** |
+| 1 | W1 — unvalidated page→background bridge | #120 / #122 | `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H` | **9.6 Critical** |
+| 1 | W2 — registration token → page origin | #121 | `AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:L` | **9.6 Critical** |
 | 4 | V2 — origin bypass / DNS rebinding | #106 | `AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H` | **8.8 High** |
 | 5 | S2 — slow-connection worker starvation | #112 | `AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H` | **7.5 High** |
 | 5 | S1 — unbounded header memory | #111 | `AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H` | **7.5 High** |
-| 7 | W8 — stale token misattribution | #132 | `AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N` | **5.6 Medium** |
+| 7 | W8 — stale token misattribution | #132 | `AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N` | **6.1 Medium** |
 | 8 | P8 — rustls advisory pin | #127 | `AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N` | **3.7 Low** |
 | 9 | W5a — EU exclusion bypass | #131 | `AV:L/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N` | **3.3 Low** |
 
-**Nothing reaches Critical.** The gap to 9.0 on the top four is entirely
-`UI:R` — each needs the victim to act (click a link, register, be browsing a
-matched site).
+**Three findings reach Critical (9.6) — V1, W1 and W2 — despite each
+requiring `UI:R`.** V1 and W1 share the canonical CSRF-to-RCE vector shape
+(`AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H`); W2 differs only in `A:L` and lands
+on the same 9.6. The first revision's "nothing reaches Critical" headline
+was an artefact of the arithmetic error, not of the metric choices. What
+separates the rest from the top is impact and scope, not exploitability:
+W8 carries a partial impact vector, V2 is capped by `S:U`, and the snare
+pair is availability-only.
 
 ## Metric rationale
 
-### V1 — OAuth handoff reflected XSS (8.9)
+### V1 — OAuth handoff reflected XSS (9.6)
 
 - `S:C` — standard treatment for reflected XSS: vulnerable component is the
   server, impacted security authority is the victim's browser.
@@ -42,7 +59,7 @@ matched site).
 - Cross-site reachability depends on `origin.rs:48-50` passing no-Origin
   requests — i.e. on V2. See the filing note below.
 
-### W1 — unvalidated page→background bridge (8.9)
+### W1 — unvalidated page→background bridge (9.6)
 
 - `S:C` — the bridge is the vulnerable component; the impacted authorities
   (privileged background handlers, extension storage, the user's backend
@@ -55,12 +72,13 @@ matched site).
   `C:H/I:H/A:H`. The `isLoggedIn`/non-EU precondition on `SEND_RAW_LOG` and
   `UPDATE_USER` therefore does not lower the score.
 
-### W2 — registration token → page origin (8.9)
+### W2 — registration token → page origin (9.6)
 
 - Identical exploitability to W1 (`S:C`, `AC:L`, `PR:N`, `UI:R`); the
   difference is reach, not score.
-- `A:L` rather than `A:H` because the DoS path is speculative — but `C:H`
-  and `I:H` already saturate the impact sub-score.
+- `A:L` rather than `A:H` because the DoS path is speculative; under the
+  corrected formula the choice does not move the rounded score (9.6 either
+  way).
 - The disclosed bearer token is the `Authorization` credential for
   `data-api.whotargets.me` (`app.js:13`), so disclosure implies full account
   read/write.
@@ -91,12 +109,12 @@ matched site).
 - Both compose — dribbling the flood also parks a slot — but each stands
   alone.
 
-### W8 — stale token misattribution (5.6)
+### W8 — stale token misattribution (6.1)
 
 - Lowest-confidence score in the set. `I:L` because the report explicitly
   states backend acceptance of the stale token is **not demonstrated**.
 - If the backend accepts the stale bearer (it *is* a valid token for a real
-  account), integrity rises to `I:H` and the score to **7.6**.
+  account), integrity rises to `I:H` and the score to **8.2**.
 - Cross-user account switching would additionally add `C:H`.
 
 ### P8 — rustls advisory pin (3.7)
@@ -126,27 +144,31 @@ matched site).
 
 | Finding | Swing | Driver |
 |---|---|---|
-| W1 | 8.9 → **9.9 Critical** | `UI:N`, if browsing an ad-heavy matched site is not counted as user interaction |
-| W1 | 8.9 → 8.8 | `S:U` |
-| W2 | 8.9 → 8.3 | `S:U` |
-| W2 | 8.9 → 6.5 | disclosure-only reading (`C:H/I:N/A:N`), treating token use as a separate step |
-| V1 | 8.9 → 8.8 | `S:U` |
-| V2 | 8.8 → 8.9 | `S:C`, if agent-spawn RCE is counted as beyond the middleware's authz scope |
+| W1 | 9.6 → **10.0 Critical** | `UI:N`, if browsing an ad-heavy matched site is not counted as user interaction |
+| W1 | 9.6 → 8.8 | `S:U` |
+| W1 | 9.6 → 8.3 | `AC:H`, pricing "attacker script already running on a matched top-tier origin" as a condition beyond the attacker's control (second-opinion reading) |
+| W2 | 9.6 → 8.3 | `S:U` |
+| W2 | 9.6 → 7.4 | disclosure-only reading (`C:H/I:N/A:N`), treating token use as a separate step |
+| W2 | 9.6 → 8.2 | `AC:H` (same second-opinion prerequisite as W1 above) |
+| W1 | 9.6 → 8.1 | `AC:H` + `UI:N` + partial impact (`C:L/I:H/A:L`) — the second opinion's full alternative vector |
+| W2 | 9.6 → 6.8 Medium | `AC:H` + `UI:N` + `C:H/I:N/A:N` — the second opinion's full alternative vector (drops a band) |
+| V1 | 9.6 → 8.8 | `S:U` |
+| V2 | 8.8 → **9.6 Critical** | `S:C`, if agent-spawn RCE is counted as beyond the middleware's authz scope |
 | V2 | 8.8 → 7.5 | `AC:H`, if same-port rebinding is judged a special condition |
-| W8 | 5.6 → 7.6 | `I:H`, if backend acceptance of stale tokens is assumed |
+| W8 | 6.1 → 8.2 | `I:H`, if backend acceptance of stale tokens is assumed |
 
 ## Filing recommendations
 
 1. **File V1 and V2 as a pair, not as independent findings.** V1's
-   cross-site reachability *is* V2's no-Origin pass. Two separate High scores
+   cross-site reachability *is* V2's no-Origin pass. Two separate top scores
    for one root cause invites a reviewer to discount both. File V2 as the
    root cause and V1 as its demonstrated exploit path.
-2. **Lead the four High submissions with the caveat their reports already
-   contain.** A 8.9 filed with an honest impact paragraph survives review
-   better than a 9.9 that doesn't. FP scoring is zero.
+2. **Lead the Critical/High submissions with the caveat their reports already
+   contain.** A 9.6 filed with an honest impact paragraph survives review
+   better than a 10.0 that doesn't. FP scoring is zero.
 3. **V1's token-theft chain is source-confirmed, not runtime-demonstrated.**
    State that explicitly; do not imply a live token was exfiltrated.
-4. **W8's 5.6 is gated on backend behaviour that was never tested.** Either
+4. **W8's 6.1 is gated on backend behaviour that was never tested.** Either
    say so, or do not claim the integrity impact at all.
 5. **P8 needs `funnel.py report 127` before the T+4:30 freeze** — it is the
    only verified row with a report skeleton still pending.
